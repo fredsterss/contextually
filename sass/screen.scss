@@ -1,0 +1,41 @@
+@import "compass";
+@import "compass/reset";
+
+/* Create a sane, standardised baseline */
+$font-family: 'Helvetica Neue', Helvetica, sans-serif;
+$base-font-size: 16px;
+$base-line-height: 24px;
+@include establish-baseline;
+
+body {
+  font-family: $font-family;  
+}
+
+#main {
+  width: 100%;
+  @include box-sizing('border-box');
+  padding: 2em;
+  position: relative;
+}
+
+ul {
+  list-style: disc inside none;
+}
+
+li {
+  
+}
+
+#new-message {
+  @include box-sizing('border-box');
+  @include adjust-font-size-to(16px, 1);
+  font-family: $font-family;
+  padding: 1em;
+  height: 8em;
+  width: 100%;
+  margin: 2em 0;
+}
+
+#topics {
+  margin-bottom: 1em;
+}
