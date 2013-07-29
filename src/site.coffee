@@ -4,6 +4,7 @@ class @Contextually
   
   input: $('#new-message')
   messages: $('#messages')
+  topics: $('#topics')
 
   constructor: ->
     @userId = window.location.hash.substr(1)
@@ -24,6 +25,9 @@ class @Contextually
     @f.on 'value', (snapshot) =>
       @renderMessages snapshot.val()
 
+    $('.message').on 'click', (e) ->
+      console.log e
+
   addMessage: ->
     @saveMessage @input.val()
     @input.val ''
@@ -36,11 +40,16 @@ class @Contextually
   renderMessages: (list) ->
     @messages.empty()
     for key, message of list
+      message.key = key
       @renderMessage message
 
   renderMessage: (message) ->
-    @messages.append "<li>#{message.user_id}: #{message.text}</li>"
+    @messages.append "<li class='message' id='#{message.key}'>#{message.user_id}: #{message.text}</li>"
+    $("##{message.key}").on 'click', (e) =>
+      @newTopic message
 
+  newTopic: (message) ->
+    @topics.append "<li class='topic'>#{message.text}</li>"
 
 $('document').ready ->
   new Contextually()

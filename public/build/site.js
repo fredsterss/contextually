@@ -9,6 +9,8 @@
 
     Contextually.prototype.messages = $('#messages');
 
+    Contextually.prototype.topics = $('#topics');
+
     function Contextually() {
       this.userId = window.location.hash.substr(1);
       this.chatId = 11111;
@@ -25,8 +27,11 @@
           return e.preventDefault();
         }
       });
-      return this.f.on('value', function(snapshot) {
+      this.f.on('value', function(snapshot) {
         return _this.renderMessages(snapshot.val());
+      });
+      return $('.message').on('click', function(e) {
+        return console.log(e);
       });
     };
 
@@ -48,13 +53,22 @@
       _results = [];
       for (key in list) {
         message = list[key];
+        message.key = key;
         _results.push(this.renderMessage(message));
       }
       return _results;
     };
 
     Contextually.prototype.renderMessage = function(message) {
-      return this.messages.append("<li>" + message.user_id + ": " + message.text + "</li>");
+      var _this = this;
+      this.messages.append("<li class='message' id='" + message.key + "'>" + message.user_id + ": " + message.text + "</li>");
+      return $("#" + message.key).on('click', function(e) {
+        return _this.newTopic(message);
+      });
+    };
+
+    Contextually.prototype.newTopic = function(message) {
+      return this.topics.append("<li class='topic'>" + message.text + "</li>");
     };
 
     return Contextually;
