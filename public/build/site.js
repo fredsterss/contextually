@@ -14,7 +14,7 @@
     function Contextually() {
       this.userId = window.location.hash.substr(1);
       this.chatId = 11111;
-      this.f = new Firebase("" + this.firebaseRef + "/chats/" + this.chatId + "/message_list/");
+      this.f = new Firebase("" + this.firebaseRef + "/chats/" + this.chatId + "/");
       this.input.focus();
       this.addListeners();
     }
@@ -27,11 +27,12 @@
           return e.preventDefault();
         }
       });
-      this.f.on('value', function(snapshot) {
+      this.f.child('message_list').on('value', function(snapshot) {
+        _this.messageList = snapshot.val();
         return _this.renderMessages(snapshot.val());
       });
-      return $('.message').on('click', function(e) {
-        return console.log(e);
+      return this.f.child('topics').on('value', function(snapshot) {
+        return _this.renderTopics(snapshot.val());
       });
     };
 
@@ -41,7 +42,7 @@
     };
 
     Contextually.prototype.saveMessage = function(text) {
-      return this.f.push().set({
+      return this.f.child('message_list').push({
         user_id: this.userId,
         text: text
       });
@@ -63,12 +64,26 @@
       var _this = this;
       this.messages.append("<li class='message' id='" + message.key + "'>" + message.user_id + ": " + message.text + "</li>");
       return $("#" + message.key).on('click', function(e) {
-        return _this.newTopic(message);
+        return _this.saveTopic(message);
       });
     };
 
-    Contextually.prototype.newTopic = function(message) {
-      return this.topics.append("<li class='topic'>" + message.text + "</li>");
+    Contextually.prototype.saveTopic = function(message) {
+      return this.f.child('topics').push({
+        key: message.key
+      });
+    };
+
+    Contextually.prototype.renderTopics = function(topics) {
+      var key, message, topic, _results;
+      this.topics.empty();
+      _results = [];
+      for (key in topics) {
+        topic = topics[key];
+        message = this.messageList[topic.key];
+        _results.push(this.topics.append("<li class='topic'>" + message.text + "</li>"));
+      }
+      return _results;
     };
 
     return Contextually;
